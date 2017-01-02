@@ -3,6 +3,7 @@ import praw
 import time
 import json
 import re
+
 reddit = praw.Reddit('bot1', user_agent='bot1 user agent')
 subreddit = reddit.subreddit("Kitten_bots")
 replies = 0
@@ -20,14 +21,17 @@ def gen_reply(name, desc, links):
 [^SSBMBot](https://github.com/thearctickitten/SSBMBot) ^by ^[TheArcticKitten](/u/thearctickitten)""".format(name, desc, links)
 
 while True:
+	#loop through each submission
 	for submission in subreddit.hot(limit=300):
 		submission.comments.replace_more(limit=0)
+
+		#loop through each comment
 		for comment in submission.comments.list():
 			#continue on if we've commented already
 			if comment.id in open('commented.txt').read():
 				continue
 
-			#find the keyword in the comment body
+			#generate a reply if we find the keyword within the comment body
 			for item in info:
 				if re.search("!{}".format(item), comment.body, flags=re.IGNORECASE):
 					comment.reply(gen_reply(
